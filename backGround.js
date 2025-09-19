@@ -1,13 +1,13 @@
-chrome.tabs.onUpdate.addListener((tabId, tab) => {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // Check if the URL exists and the page has finished loading
+    if (changeInfo.status === 'complete' && tab.url && tab.url.includes("youtube.com/watch")) {
+        const queryParams = tab.url.split("?")[1];
+        const urlParams = new URLSearchParams(queryParams); // Corrected variable name
 
-    if(tab.url && tab.url.includes("youtube.com/watch")){
-        const queryparams=tab.url.split("?")[1];
-        const urlparams=new URLSearchParams(queryparams);
-        console.log(urlparams);
-        chrome.tabs.sendMessage(tabId,{
-            type:"NEW",
-            videoId:urlParameters.get("v"),
-
+        // Send a message to the content script with the new video ID
+        chrome.tabs.sendMessage(tabId, {
+            type: "NEW",
+            videoId: urlParams.get("v") // Correctly using urlParams
         });
     }
 });
